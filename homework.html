@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    .canvas{
+        width: 80%;
+        display: flex;
+        margin: auto;
+        
+    }
+    .cart{
+        width: 60%;
+        position: relative;
+        border: 1px solid #ccc;
+        padding: 1rem;
+    }
+    .cart span{
+        position: absolute;
+        right: 5rem;
+    }
+    
+    .page{
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+    }
+    .page_img{
+        width: 20%;
+        height: 20%;
+        overflow: hidden;
+    }
+    .page_img img{
+        display: block;
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+    }
+    .card{
+        display: flex;
+        align-items: center;
+    }
+    div{
+        padding: 2px;
+    }
+    input{
+        text-align: center;
+        width: 30px;
+        margin: 10px;
+    }
+    .price{
+        /* padding: 0 1rem 0 4rem; */
+    }
+    button{
+        border:none;
+    }
+    .summary{
+        width: 40%;
+        border: 1px solid #ccc;
+        padding: 1rem;
+    }
+    .summary_caption{
+        display: flex;
+        flex-direction: column;
+    }
+    .caption_group{
+        display: flex;
+        justify-content: space-between;
+        padding: 20px 0;
+    }
+    .total{
+        text-align: center;
+
+    }
+</style>
+<body>
+    <div id="app">
+        <section class="canvas">
+            <div class="cart">
+                <h2>Shopping Cart</h2>
+                <span>Xitems</span>
+                <div class="page" v-for="(item, index) in cartList" :key="index">
+                    <div class="page_img">
+                    <img :src="item.src" alt="">
+                    </div>
+                    <div class="name">{{item.name}}</div>
+                    <div class="btn">
+                        <button @click="reduce(index)">-</button>
+                        <input type="number" v-model="item.count" />
+                        <button @click="add(index)">+</button>
+                    </div>
+                    <div class="price">
+                        <div class="price">{{ item.price}}</div>
+                    </div>
+                    <div class="cancel">
+                        <button @click="cancel(index)">X</button>
+                    </div>
+                </div>
+            </div>
+            <div class="summary" >
+                <h2>Summary</h2>
+                <div class="summary_caption" >
+                    <div class="caption_group" v-for="(item, index) in cartList"   :key="index">
+                        <div class="caption_text">
+                            {{ item.count}}x{{item.name}}
+                        </div>
+                        <div class="caption_price">
+                            {{item.count*item.price}}
+                        </div>
+                    </div> 
+                    <div class="total" >
+                        <p>total : {{parsePrice}} </p>
+                        <button @check="">checkout</button>
+                    </div>
+                </div>
+                
+            </div>
+        </section>
+    </div>
+
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script>
+        Vue.createApp({
+            data(){
+                return {
+                    cartList:[
+                        {
+                            src:"./img/nike01.jpg",
+                            name:"Nike Revolution6",
+                            count: 1,
+                            stock: 10,
+                            price:3600
+                        },
+                        {
+                            src:"./img/nike02.jpg",
+                            name:"Nike Air Max 270",
+                            count: 2,
+                            stock: 10,
+                            price:3800
+                        },
+                        {
+                            src:"./img/nike03.jpg",
+                            name:"Nike Air Max AP",
+                            count: 3,
+                            stock: 10,
+                            price:4200
+                        },
+                        {
+                            src:"./img/nike04.jpg",
+                            name:"Sportswear DUNK",
+                            count: 4,
+                            stock: 10,
+                            price:4700
+                        },
+                    ],
+                }
+            },
+            computed: {
+                parsePrice(){
+                    if(this.cartList.length === 0) return 0
+                //     //寫法一
+                    let total = 0
+                    for (let index = 0; index < this.cartList.length; index++) {
+                        const accumulator = this.cartList[index]['price'] * this.cartList[index]['count']
+                        total += accumulator 
+                    }
+                    return total
+                }
+            },
+            methods:{
+                reduce(index){
+                    if(this.cartList[index].count == 0)
+                        return;
+                        this.cartList[index].count -= 1;
+                },
+                add(index){
+                    if(this.cartList[index].count === this.cartList[index].stock) return; //傳入的值要是數值不是字串
+                    this.cartList[index].count += 1;
+                    //禁止購物車數量>商品庫存數量
+                },
+                cancel(index){
+                    
+                    this.cartList.splice(index, 1)
+                
+                },
+
+
+            }
+        }).mount("#app")
+    </script>
+</body>
+</html>
